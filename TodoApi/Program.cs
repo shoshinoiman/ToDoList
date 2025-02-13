@@ -2,12 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi;
 
-
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddDbContext<ToDoDbContext>(options =>
-options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
-new MySqlServerVersion(new Version(8, 0, 0))));
 
 builder.Services.AddCors(options =>
 {
@@ -18,6 +13,12 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+builder.Services.AddDbContext<ToDoDbContext>(options =>
+options.UseMySql(builder.Configuration.GetConnectionString("ToDoDB"),
+new MySqlServerVersion(new Version(8, 0, 0))));
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -75,5 +76,6 @@ app.MapDelete("/items/{id}", async (int id, ToDoDbContext context) =>
     return Results.Ok(item);
 }
 );
-builder.WebHost.UseUrls("https://localhost:7103", "http://localhost:5126");
+app.MapGet("/", () => "Welcome to the ToDo API!");
+app.MapControllers();
 app.Run();
